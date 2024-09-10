@@ -33,12 +33,15 @@ A simple implementation for slider that using vanilla JS for better slider suppo
 ```
 First include the JS files that we need
 `<script src="slider.js"></script>`
+
 Next create a Div with custom ID (each slider need it's unique ID)
 `<div id="sliderDiv"></div>` you need to initialize or create the slider
+
 On the `script` part;
 `var verticalSlider = new SliderVertical('sliderDiv');` this create a Vertical Slider for `sliderDiv` and the value that get from slider will be update in `var verticalSlider`
 
 You can implement simple sending value in interval like;
+
 ```JS
 function sendSliderValue() {
             const sliderValue = verticalSlider.currentValue; // Get current value of the slider
@@ -64,6 +67,7 @@ function sendSliderValue() {
 ```
 
 Here is more advance configuration (see Parameter List for more options)
+
 ```JS
     <script>
         // Create a Vertical Slider
