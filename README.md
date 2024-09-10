@@ -3,7 +3,7 @@ A simple implementation for slider that using vanilla JS for better slider suppo
 
 ## How to use it
 
-### Basic
+### Basic guide
 ```HTML
 <!DOCTYPE html>
 <html lang="en">
@@ -92,7 +92,8 @@ Here is more advance configuration (see Parameter List for more options)
 ```
 No need for configure all parameter, see the default value if it match your requirements.
 
-### Type
+## Type
+
 1. **`SliderVertical`**
   - For Horizontal style slider
 
