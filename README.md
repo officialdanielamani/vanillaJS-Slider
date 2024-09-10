@@ -1,5 +1,12 @@
 # vanillaJS-Slider
-A simple implementation for slider that using vanilla JS for better slider support like vertical slider.
+A simple implementation for slider that using vanilla JS for better slider support like vertical slider. No need external library, easy to use.
+
+## To-Do
+- [ ] Versioning
+- [ ] Make mini-slider (this more reduce option for space constrain appliction)
+- [ ] Make advc-slider (more functionality and options)
+- [ ] Testing edge cases
+- [ ] Adding more info, picture and tryme webpage
 
 ## How to use it
 
@@ -217,3 +224,8 @@ No need for configure all parameter, see the default value if it match your requ
 28. **`sliderSubmitButtonText: {string}`**
     - **Default:** `'OK'`
     - **Usage:** Sets the text displayed on the submit button.
+
+
+## Acknowledgements
+
+Special thanks to the contributors and the open-source community for their continuous support. Thanks to Nakamoto Albert for supporting with ProjectEDNA.
