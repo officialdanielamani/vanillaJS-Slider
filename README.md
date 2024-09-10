@@ -108,6 +108,7 @@ No need for configure all parameter, see the default value if it match your requ
   - For Vertical style slider
 
 ## Parameter List
+All paramter are optional, no need to declare if not use or need to change. See Default for each parameter for more informations. The paramters no need in spesific order.
 
 1. **`sliderStyle: {int}`**
    - **Default:** `0`
