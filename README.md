@@ -101,7 +101,7 @@ No need for configure all parameter, see the default value if it match your requ
 
 ## Type
 
-1. **`SliderVertical`**
+1. **`SliderHorizontal`**
   - For Horizontal style slider
 
 2. **`SliderVertical`**
