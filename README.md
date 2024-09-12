@@ -30,10 +30,10 @@ A simple implementation for slider that using vanilla JS for better slider suppo
 
     <script>
         // Create a basic vertical slider
-        var verticalSlider = new SliderVertical('sliderDiv');
+        const verticalSlider = new SliderVertical('sliderDiv');
 
         // Create a basic horizontal slider
-        var horizontalSlider = new SliderHorizontal('sliderDiv2');
+        const horizontalSlider = new SliderHorizontal('sliderDiv2');
     </script>
 </body>
 </html>
@@ -78,24 +78,31 @@ Here is more advance configuration (see Parameter List for more options)
 ```JS
     <script>
         // Create a Vertical Slider
-        var verticalSlider = new SliderVertical('sliderDiv', {
-        title: 'Temperature Control',
-        sliderLineColor: 'blue',
-        sliderHandleColor: 'red',
-        showCurrentValue: true,
-        enableInputField: true,
-        step: 5,
-        sliderBackgroundColour: 'white',
-        sliderValueInfo: 'Temperature:',
-        sliderCanvasBorderWeight: 2,
-        sliderCanvasBorderColour: 'white',
-        sliderTitleColour: 'yellow',
-        sliderInfoColour: 'green',
-        sliderSubmitButtonColour: 'blue',
-        sliderSubmitButtonTextColour: 'white',
-        sliderShowSubmitButton: true,
-        sliderStyle: 2 
-    });
+        const advancedVerticalSlider = new SliderVertical('advancedVerticalSlider', {
+            width: 50,
+            height: 500,
+            minValue: 0,
+            maxValue: 100,
+            step: 1,
+            sliderLineColor: '#FF0000', 
+            sliderHandleColor: '#00FF00',
+            showCurrentValue: true,
+            enableInputField: true,
+            sliderHandleWidth: 30,
+            sliderShowSubmitButton: true,
+            sliderValueInfo: 'Current Value:',
+            sliderSwapPosition: false,
+            sliderSubmitButtonText: 'OK',
+            sliderStyle: 2, 
+            sliderHandleShape: 'square', // Square handle
+            sliderHandleWidth: 30,
+            sliderHandleHeight: 15,
+            autoReturnToPos: true,
+            returnToPosValue: 50, // Return to 50 when released
+            onChange: (value) => {
+                console.log(`advancedVerticalSlider: ${value}`); // Show value in console
+            }
+        });
 ```
 No need for configure all parameter, see the default value if it match your requirements.
 
@@ -110,122 +117,96 @@ No need for configure all parameter, see the default value if it match your requ
 ## Parameter List
 All paramter are optional, no need to declare if not use or need to change. See Default for each parameter for more informations. The paramters no need in spesific order.
 
-1. **`sliderStyle: {int}`**
-   - **Default:** `0`
-   - **Usage:** Determines the layout style of the slider, value display, input field, and submit button. 
-     - `0` - Default vertical layout.
-     - `1` - Two boxes side by side (slider in one box, controls in the other).
-     - `2` - Two boxes side by side with different content.
-     - `3` - All elements in a single row.
+1. **`width: {int}`**  
+   - **Default**: Width is determined by child classes (e.g., `SliderVertical:50`, `SliderHorizontal:300`).  
+   - **Usage**: Specifies the width of the slider in pixels.
 
-2. **`title: {string}`**
-   - **Default:** `''` (empty string)
-   - **Usage:** Sets the title displayed above the slider. If not set, no title is displayed.
+2. **`height: {int}`**  
+   - **Default**: Height is determined by child classes (e.g., `SliderVertical:300`, `SliderHorizontal:50`).  
+   - **Usage**: Specifies the height of the slider in pixels.
 
-3. **`width: {int}`**
-   - **Default:** `50` for `SliderVertical`, `300` for `SliderHorizontal`
-   - **Usage:** Specifies the width of the slider canvas.
+3. **`sliderLineWidth: {int}`**  
+   - **Default**: 2  
+   - **Usage**: Determines the width of the slider line in pixels.
 
-4. **`height: {int}`**
-   - **Default:** `400` for `SliderVertical`, `50` for `SliderHorizontal`
-   - **Usage:** Specifies the height of the slider canvas.
+4. **`sliderLineColor: {string}`**  
+   - **Default**: `'#000'` (black)  
+   - **Usage**: Sets the color of the slider line. Accepts any valid CSS color value.
 
-5. **`sliderLineColor: {string}`**
-   - **Default:** `'blue'`
-   - **Usage:** Sets the color of the slider line.
+5. **`sliderHandleWidth: {int}`**  
+   - **Default**: 20  
+   - **Usage**: Sets the width of the slider handle in pixels.
 
-6. **`sliderLineWidth: {int}`**
-   - **Default:** `2`
-   - **Usage:** Specifies the width of the slider line.
+6. **`sliderHandleHeight: {int}`**  
+   - **Default**: 20  
+   - **Usage**: Sets the height of the slider handle in pixels.
 
-7. **`sliderHandleColor: {string}`**
-   - **Default:** `'red'`
-   - **Usage:** Sets the color of the slider handle.
+7. **`sliderHandleColor: {string}`**  
+   - **Default**: `'#444'` (dark grey)  
+   - **Usage**: Defines the color of the slider handle. Accepts any valid CSS color value.
 
-8. **`sliderHandleWidth: {int}`**
-   - **Default:** `20`
-   - **Usage:** Specifies the width of the slider handle.
+8. **`sliderHandleShape: {string}`**  
+   - **Default**: `'circle'`  
+   - **Usage**: Specifies the shape of the slider handle.  
+     - `'circle'` - Circular handle.  
+     - `'square'` - Square handle.  
+     - `'rounded-rectangle'` - Rounded rectangle handle.
 
-9. **`sliderHandleHeight: {int}`**
-   - **Default:** `20`
-   - **Usage:** Specifies the height of the slider handle.
+9. **`autoReturnToPos: {boolean}`**  
+   - **Default**: `false`  
+   - **Usage**: If `true`, the slider handle will automatically return to a specified position when released.
 
-10. **`autoReturnToPos: {boolean}`**
-    - **Default:** `false`
-    - **Usage:** Determines whether the slider handle should automatically return to a set position when released.
+10. **`returnToPosValue: {int}`**  
+    - **Default**: 0  
+    - **Usage**: Defines the position to which the slider handle will return if `autoReturnToPos` is enabled.
 
-11. **`returnToPosValue: {int}`**
-    - **Default:** `0`
-    - **Usage:** Specifies the value to which the slider handle should return if `autoReturnToPos` is set to `true`.
+11. **`minValue: {int}`**  
+    - **Default**: 0  
+    - **Usage**: Specifies the minimum value of the slider.
 
-12. **`minValue: {int}`**
-    - **Default:** `0`
-    - **Usage:** Specifies the minimum value for the slider.
+12. **`maxValue: {int}`**  
+    - **Default**: 100  
+    - **Usage**: Specifies the maximum value of the slider.
 
-13. **`maxValue: {int}`**
-    - **Default:** `100`
-    - **Usage:** Specifies the maximum value for the slider.
+13. **`step: {int}`**  
+    - **Default**: 1  
+    - **Usage**: Sets the increment or decrement step size for the slider values.
 
-14. **`step: {int}`**
-    - **Default:** `1`
-    - **Usage:** Defines the step increment for the slider value.
+14. **`showCurrentValue: {boolean}`**  
+    - **Default**: `false`  
+    - **Usage**: If `true`, the current slider value will be displayed on the UI.
 
-15. **`intervalCheck: {boolean}`**
-    - **Default:** `false`
-    - **Usage:** Enables or disables checking of the slider value at regular intervals.
+15. **`enableInputField: {boolean}`**  
+    - **Default**: `false`  
+    - **Usage**: If `true`, an input field will be provided for the user to enter the slider value manually.
 
-16. **`showCurrentValue: {boolean}`**
-    - **Default:** `false`
-    - **Usage:** Determines whether the current slider value is displayed next to the slider.
+16. **`sliderShowSubmitButton: {boolean}`**  
+    - **Default**: `true`  
+    - **Usage**: If `true`, a submit button will be displayed to submit the slider value.
 
-17. **`enableInputField: {boolean}`**
-    - **Default:** `false`
-    - **Usage:** Enables or disables the input field for directly entering the slider value.
+17. **`sliderValueInfo: {string}`**  
+    - **Default**: `'Current Value:'`  
+    - **Usage**: Specifies the label text for the current value display.
 
-18. **`sliderShowSubmitButton: {boolean}`**
-    - **Default:** `true`
-    - **Usage:** Controls whether the submit button is displayed.
+18. **`sliderSwapPosition: {boolean}`**  
+    - **Default**: `false`  
+    - **Usage**: If `true`, swaps the default position of the slider handle.
 
-19. **`sliderBackgroundColour: {string}`**
-    - **Default:** `'white'`
-    - **Usage:** Sets the background color of the slider container.
+19. **`sliderSubmitButtonText: {string}`**  
+    - **Default**: `'OK'`  
+    - **Usage**: Text for the submit button.
 
-20. **`sliderValueInfo: {string}`**
-    - **Default:** `"Current: ${this.currentValue}"`
-    - **Usage:** Specifies the text format displayed next to the current slider value. Can be customized to display different information.
+20. **`sliderStyle: {int}`**  
+    - **Default**: 0  
+    - **Usage**: Determines the layout style of the slider, value display, input field, and submit button.  
+      - `0` - Default vertical layout.  
+      - `1` - Two boxes side by side (slider in one box, controls in the other).  
+      - `2` - Two boxes side by side with different content.  
+      - `3` - All elements in a single row.
 
-21. **`sliderCanvasBorderWeight: {int}`**
-    - **Default:** `0`
-    - **Usage:** Sets the border width of the slider canvas. A value of `0` means no border.
-
-22. **`sliderCanvasBorderColour: {string}`**
-    - **Default:** `'none'`
-    - **Usage:** Specifies the border color of the slider canvas.
-
-23. **`sliderTitleColour: {string}`**
-    - **Default:** `'black'`
-    - **Usage:** Sets the color of the slider title text.
-
-24. **`sliderInfoColour: {string}`**
-    - **Default:** `'black'`
-    - **Usage:** Sets the color of the current value text displayed next to the slider.
-
-25. **`sliderSubmitButtonColour: {string}`**
-    - **Default:** `'blue'`
-    - **Usage:** Sets the background color of the submit button.
-
-26. **`sliderSubmitButtonTextColour: {string}`**
-    - **Default:** `'white'`
-    - **Usage:** Sets the text color of the submit button.
-
-27. **`sliderSwapPosition: {boolean}`**
-    - **Default:** `false`
-    - **Usage:** When set to `true`, swaps the minimum and maximum positions of the slider. For horizontal sliders, this swaps left and right. For vertical sliders, this swaps top and bottom.
-
-28. **`sliderSubmitButtonText: {string}`**
-    - **Default:** `'OK'`
-    - **Usage:** Sets the text displayed on the submit button.
-
+21. **`onChange: {function}`**  
+    - **Default**: `null`  
+    - **Usage**: Callback function that triggers whenever the slider value changes. Receives the current value as a parameter.
 
 ## Acknowledgements
 
