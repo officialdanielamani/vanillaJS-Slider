@@ -16,72 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 (function () {
-    // Inject CSS dynamically
-    const sliderStyles = `
-        .sliderWrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 20px 0;
-            border: 1px solid #444;
-            padding: 10px;
-            border-radius: 5px;
-            width: fit-content;
-        }
-        
-        .sliderCanvasWrapper {
-            position: relative;
-            margin-bottom: 10px;
-        }
-        
-        .sliderTitle {
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-        
-        .controlsContainer {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-direction: column; /* Default to column for Style 0 */
-        }
-
-        .controlsContainer.style-1 {
-            flex-direction: row; /* Side by side for Style 1 */
-            justify-content: space-between;
-        }
-
-        .controlsContainer.style-2 {
-            flex-direction: row; /* Side by side for Style 2 */
-            justify-content: space-between;
-        }
-
-        .controlsContainer.style-3 {
-            flex-direction: row; /* All elements in a single row for Style 3 */
-            align-items: center;
-        }
-        
-        .controlsBox {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            align-items: center;
-        }
-
-        .submitButton {
-            padding: 5px 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    `;
-    
-    // Append styles to the document head
-    const styleSheet = document.createElement("style");
-    styleSheet.type = "text/css";
-    styleSheet.innerText = sliderStyles;
-    document.head.appendChild(styleSheet);
-
     // Slider class definition
     class Slider {
         constructor(containerId, config = {}) {
@@ -93,40 +27,104 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
             // Default width and height will be set by derived classes
             this.config = {
-                title: config.title !== undefined ? config.title : '',  // Title remains empty if not set
                 width: config.width,  // Width to be determined by child classes
                 height: config.height, // Height to be determined by child classes
-                sliderLineColor: config.sliderLineColor || 'blue',
                 sliderLineWidth: config.sliderLineWidth || 2,
-                sliderHandleColor: config.sliderHandleColor || 'red',
+                sliderLineColor: config.sliderLineColor || '#000', // Default line color to black
                 sliderHandleWidth: config.sliderHandleWidth || 20,
                 sliderHandleHeight: config.sliderHandleHeight || 20,
+                sliderHandleColor: config.sliderHandleColor || '#444', // Default handle color to dark grey
+                sliderHandleShape: config.sliderHandleShape || 'circle', // New parameter for handle shape
                 autoReturnToPos: config.autoReturnToPos || false,
                 returnToPosValue: config.returnToPosValue || 0,
                 minValue: config.minValue || 0,
                 maxValue: config.maxValue || 100,
                 step: config.step || 1,
-                intervalCheck: config.intervalCheck || false,
                 showCurrentValue: config.showCurrentValue || false,
                 enableInputField: config.enableInputField || false,
                 sliderShowSubmitButton: config.sliderShowSubmitButton !== undefined ? config.sliderShowSubmitButton : true,
-                sliderBackgroundColour: config.sliderBackgroundColour || 'white',
-                sliderValueInfo: config.sliderValueInfo || `Current: ${this.currentValue}`,
-                sliderCanvasBorderWeight: config.sliderCanvasBorderWeight || 0,
-                sliderCanvasBorderColour: config.sliderCanvasBorderColour || 'none',
-                sliderTitleColour: config.sliderTitleColour || 'black',
-                sliderInfoColour: config.sliderInfoColour || 'black',
-                sliderSubmitButtonColour: config.sliderSubmitButtonColour || 'blue',
-                sliderSubmitButtonTextColour: config.sliderSubmitButtonTextColour || 'white',
+                sliderValueInfo: config.sliderValueInfo || `Current Value:`,
                 sliderSwapPosition: config.sliderSwapPosition || false,
                 sliderSubmitButtonText: config.sliderSubmitButtonText || 'OK',
-                sliderStyle: config.sliderStyle || 0 // New option for layout style
+                sliderStyle: config.sliderStyle || 0, // New option for layout style
+                onChange: config.onChange || null // Callback for value changes
             };
 
             this.currentValue = this.config.minValue;
             this.isDragging = false;
 
+            this.addDefaultStyles(); // Add default styles
             this.createSlider();
+        }
+
+        addDefaultStyles() {
+            // Check if styles are already defined
+            if (!document.getElementById('slider-styles')) {
+                const style = document.createElement('style');
+                style.type = 'text/css';
+                style.id = 'slider-styles';
+
+                // Default CSS styles with lower specificity
+                const css = `
+                    .sliderWrapper {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        margin: 20px 0;
+                        padding: 10px;
+                        width: fit-content;
+                    }
+                    
+                    .sliderCanvasWrapper {
+                        position: relative;
+                        margin-bottom: 10px;
+                    }
+                    
+                    .controlsContainer {
+                        display: flex;
+                        gap: 10px;
+                        align-items: center;
+                        flex-direction: column; /* Default to column for Style 0 */
+                    }
+
+                    .controlsContainer.style-1 {
+                        flex-direction: row; /* Side by side for Style 1 */
+                        justify-content: space-between;
+                    }
+
+                    .controlsContainer.style-2 {
+                        flex-direction: row; /* Side by side for Style 2 */
+                        justify-content: space-between;
+                    }
+
+                    .controlsContainer.style-3 {
+                        flex-direction: row; /* All elements in a single row for Style 3 */
+                        align-items: center;
+                    }
+                    
+                    .controlsBox {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 5px;
+                        align-items: center;
+                    }
+
+                    .submitButton {
+                        padding: 5px 10px;
+                        border: none;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        background-color: blue;
+                        color: white;
+                    }
+                `;
+
+                // Inject CSS into the <style> element
+                style.appendChild(document.createTextNode(css));
+
+                // Append the <style> element to the document head, before any user-defined styles
+                document.head.insertBefore(style, document.head.firstChild);
+            }
         }
 
         createSlider() {
@@ -134,16 +132,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
             const sliderWrapper = document.createElement('div');
             sliderWrapper.className = 'sliderWrapper';
-            sliderWrapper.style.backgroundColor = this.config.sliderBackgroundColour;
-
-            // Only create the title element if a title is set
-            if (this.config.title) {
-                const sliderTitle = document.createElement('div');
-                sliderTitle.className = 'sliderTitle';
-                sliderTitle.textContent = this.config.title;
-                sliderTitle.style.color = this.config.sliderTitleColour; // Set title color
-                sliderWrapper.appendChild(sliderTitle);
-            }
 
             const sliderCanvasWrapper = document.createElement('div');
             sliderCanvasWrapper.className = 'sliderCanvasWrapper';
@@ -151,16 +139,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
             sliderCanvasWrapper.style.height = `${this.config.height}px`;
 
             const sliderCanvas = document.createElement('canvas');
-            sliderCanvas.id = this.config.title ? this.config.title.replace(/\s+/g, '_') : `slider_${Math.random().toString(36).substr(2, 9)}`; // Unique ID if title is not set
+            sliderCanvas.id = `slider_${Math.random().toString(36).substr(2, 9)}`; // Unique ID
             sliderCanvas.width = this.config.width;
             sliderCanvas.height = this.config.height;
-
-            // Apply border settings if border weight is greater than 0
-            if (this.config.sliderCanvasBorderWeight > 0) {
-                sliderCanvas.style.border = `${this.config.sliderCanvasBorderWeight}px solid ${this.config.sliderCanvasBorderColour}`;
-            } else {
-                sliderCanvas.style.border = 'none'; // No border if weight is 0
-            }
 
             sliderCanvasWrapper.appendChild(sliderCanvas);
 
@@ -179,19 +160,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
         drawSlider(ctx) {
             ctx.clearRect(0, 0, this.config.width, this.config.height);
 
+            ctx.strokeStyle = this.config.sliderLineColor; // Set the line color
+            ctx.lineWidth = this.config.sliderLineWidth; // Set the line width
+
             if (this instanceof SliderVertical) {
                 ctx.beginPath();
                 ctx.moveTo(this.config.width / 2, 0);
                 ctx.lineTo(this.config.width / 2, this.config.height);
-                ctx.strokeStyle = this.config.sliderLineColor;
-                ctx.lineWidth = this.config.sliderLineWidth;
                 ctx.stroke();
             } else {
                 ctx.beginPath();
                 ctx.moveTo(0, this.config.height / 2);
                 ctx.lineTo(this.config.width, this.config.height / 2);
-                ctx.strokeStyle = this.config.sliderLineColor;
-                ctx.lineWidth = this.config.sliderLineWidth;
                 ctx.stroke();
             }
 
@@ -211,9 +191,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
                     : this.config.height - ((this.currentValue - this.config.minValue) / (this.config.maxValue - this.config.minValue) * (this.config.height - this.config.sliderHandleHeight) + this.config.sliderHandleHeight / 2)
                 : this.config.height / 2;
 
+            ctx.fillStyle = this.config.sliderHandleColor; // Set the handle color
+
+            // Draw the handle based on the shape
             ctx.beginPath();
-            ctx.arc(handleX, handleY, this.config.sliderHandleWidth / 2, 0, Math.PI * 2);
-            ctx.fillStyle = this.config.sliderHandleColor;
+            if (this.config.sliderHandleShape === 'circle') {
+                ctx.arc(handleX, handleY, this.config.sliderHandleWidth / 2, 0, Math.PI * 2);
+            } else if (this.config.sliderHandleShape === 'square') {
+                ctx.rect(
+                    handleX - this.config.sliderHandleWidth / 2,
+                    handleY - this.config.sliderHandleHeight / 2,
+                    this.config.sliderHandleWidth,
+                    this.config.sliderHandleHeight
+                );
+            } else if (this.config.sliderHandleShape === 'rounded-rectangle') {
+                const radius = 5; // Example corner radius
+                ctx.moveTo(handleX - this.config.sliderHandleWidth / 2 + radius, handleY - this.config.sliderHandleHeight / 2);
+                ctx.lineTo(handleX + this.config.sliderHandleWidth / 2 - radius, handleY - this.config.sliderHandleHeight / 2);
+                ctx.quadraticCurveTo(handleX + this.config.sliderHandleWidth / 2, handleY - this.config.sliderHandleHeight / 2, handleX + this.config.sliderHandleWidth / 2, handleY - this.config.sliderHandleHeight / 2 + radius);
+                ctx.lineTo(handleX + this.config.sliderHandleWidth / 2, handleY + this.config.sliderHandleHeight / 2 - radius);
+                ctx.quadraticCurveTo(handleX + this.config.sliderHandleWidth / 2, handleY + this.config.sliderHandleHeight / 2, handleX + this.config.sliderHandleWidth / 2 - radius, handleY + this.config.sliderHandleHeight / 2);
+                ctx.lineTo(handleX - this.config.sliderHandleWidth / 2 + radius, handleY + this.config.sliderHandleHeight / 2);
+                ctx.quadraticCurveTo(handleX - this.config.sliderHandleWidth / 2, handleY + this.config.sliderHandleHeight / 2, handleX - this.config.sliderHandleWidth / 2, handleY + this.config.sliderHandleHeight / 2 - radius);
+                ctx.lineTo(handleX - this.config.sliderHandleWidth / 2, handleY - this.config.sliderHandleHeight / 2 + radius);
+                ctx.quadraticCurveTo(handleX - this.config.sliderHandleWidth / 2, handleY - this.config.sliderHandleHeight / 2, handleX - this.config.sliderHandleWidth / 2 + radius, handleY - this.config.sliderHandleHeight / 2);
+            }
             ctx.fill();
             ctx.strokeStyle = 'grey';
             ctx.lineWidth = 2;
@@ -225,74 +227,50 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
             controlsContainer.className = `controlsContainer ${this.getControlsStyleClass()}`;
 
             if (this.config.sliderStyle === 1) {
-                // Style 1: Two boxes side by side
                 this.createStyle1Controls(controlsContainer, wrapper);
             } else if (this.config.sliderStyle === 2) {
-                // Style 2: Two boxes side by side with different content
                 this.createStyle2Controls(controlsContainer, wrapper);
             } else if (this.config.sliderStyle === 3) {
-                // Style 3: All elements in a single row
                 this.createStyle3Controls(controlsContainer, wrapper);
             } else {
-                // Default Style 0: Vertical layout
                 this.createDefaultControls(controlsContainer);
             }
 
             wrapper.appendChild(controlsContainer);
         }
 
-        createStyle1Controls(controlsContainer, wrapper) {
-            // Style 1: Two boxes side by side
-            const box1 = document.createElement('div');
-            box1.className = 'controlsBox';
-
-            const box2 = document.createElement('div');
-            box2.className = 'controlsBox';
-
-            const sliderBox = document.createElement('div');
-            sliderBox.style.display = 'flex';
-            sliderBox.style.flexDirection = 'column';
-            sliderBox.style.alignItems = 'center';
-
-            sliderBox.appendChild(wrapper.querySelector('.sliderCanvasWrapper'));
-
-            box1.appendChild(sliderBox);
-
+        createDefaultControls(controlsContainer) {
             if (this.config.showCurrentValue) {
                 const valueDisplay = document.createElement('div');
-                valueDisplay.id = `${this.config.title}_valueDisplay`;
+                valueDisplay.id = `${this.container.id}_valueDisplay`; // Ensure unique ID for the display
                 valueDisplay.textContent = `${this.config.sliderValueInfo} ${this.currentValue}`;
-                valueDisplay.style.color = this.config.sliderInfoColour;
-                sliderBox.appendChild(valueDisplay);
+                controlsContainer.appendChild(valueDisplay);
             }
 
-            const inputField = document.createElement('input');
-            inputField.type = 'number';
-            inputField.min = this.config.minValue;
-            inputField.max = this.config.maxValue;
-            inputField.step = this.config.step;
-            inputField.value = this.currentValue;
-            inputField.id = `${this.config.title}_inputField`;
-            inputField.addEventListener('input', (e) => this.updateSliderValue(e.target.value));
-            box2.appendChild(inputField);
+            if (this.config.enableInputField) {
+                const inputField = document.createElement('input');
+                inputField.type = 'number';
+                inputField.min = this.config.minValue;
+                inputField.max = this.config.maxValue;
+                inputField.step = this.config.step;
+                inputField.value = this.currentValue;
+                inputField.id = `${this.container.id}_inputField`; // Ensure unique ID for the input
+                inputField.addEventListener('input', (e) => this.updateSliderValue(e.target.value));
+                controlsContainer.appendChild(inputField);
+            }
 
             if (this.config.sliderShowSubmitButton) {
                 const submitButton = document.createElement('button');
                 submitButton.textContent = this.config.sliderSubmitButtonText;
                 submitButton.className = 'submitButton';
                 submitButton.type = 'submit';
-                submitButton.style.backgroundColor = this.config.sliderSubmitButtonColour;
-                submitButton.style.color = this.config.sliderSubmitButtonTextColour;
                 //submitButton.addEventListener('click', () => alert(`Slider value: ${this.currentValue}`));
-                box2.appendChild(submitButton);
+                controlsContainer.appendChild(submitButton);
             }
-
-            controlsContainer.appendChild(box1);
-            controlsContainer.appendChild(box2);
         }
 
-        createStyle2Controls(controlsContainer, wrapper) {
-            // Style 2: Two boxes side by side with different content
+        createStyle1Controls(controlsContainer, wrapper) {
+            // Implement style 1 controls
             const box1 = document.createElement('div');
             box1.className = 'controlsBox';
             box1.appendChild(wrapper.querySelector('.sliderCanvasWrapper'));
@@ -300,91 +278,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
             const box2 = document.createElement('div');
             box2.className = 'controlsBox';
 
-            if (this.config.showCurrentValue) {
-                const valueDisplay = document.createElement('div');
-                valueDisplay.id = `${this.config.title}_valueDisplay`;
-                valueDisplay.textContent = `${this.config.sliderValueInfo} ${this.currentValue}`;
-                valueDisplay.style.color = this.config.sliderInfoColour;
-                box2.appendChild(valueDisplay);
-            }
+            this.appendControls(box2);
+            controlsContainer.appendChild(box1);
+            controlsContainer.appendChild(box2);
+        }
 
-            if (this.config.enableInputField) {
-                const inputField = document.createElement('input');
-                inputField.type = 'number';
-                inputField.min = this.config.minValue;
-                inputField.max = this.config.maxValue;
-                inputField.step = this.config.step;
-                inputField.value = this.currentValue;
-                inputField.id = `${this.config.title}_inputField`;
-                inputField.addEventListener('input', (e) => this.updateSliderValue(e.target.value));
-                box2.appendChild(inputField);
-            }
+        createStyle2Controls(controlsContainer, wrapper) {
+            // Implement style 2 controls
+            const box1 = document.createElement('div');
+            box1.className = 'controlsBox';
+            box1.appendChild(wrapper.querySelector('.sliderCanvasWrapper'));
 
-            if (this.config.sliderShowSubmitButton) {
-                const submitButton = document.createElement('button');
-                submitButton.textContent = this.config.sliderSubmitButtonText;
-                submitButton.className = 'submitButton';
-                submitButton.type = 'submit';
-                submitButton.style.backgroundColor = this.config.sliderSubmitButtonColour;
-                submitButton.style.color = this.config.sliderSubmitButtonTextColour;
-                //submitButton.addEventListener('click', () => alert(`Slider value: ${this.currentValue}`));
-                box2.appendChild(submitButton);
-            }
+            const box2 = document.createElement('div');
+            box2.className = 'controlsBox';
 
+            this.appendControls(box2);
             controlsContainer.appendChild(box1);
             controlsContainer.appendChild(box2);
         }
 
         createStyle3Controls(controlsContainer, wrapper) {
-            // Style 3: All elements in a single row
+            // Implement style 3 controls
             controlsContainer.classList.add('style-3');
-
-            // Append the slider
             controlsContainer.appendChild(wrapper.querySelector('.sliderCanvasWrapper'));
-
-            // Create and append the value display
-            if (this.config.showCurrentValue) {
-                const valueDisplay = document.createElement('div');
-                valueDisplay.id = `${this.config.title}_valueDisplay`;
-                valueDisplay.textContent = `${this.config.sliderValueInfo} ${this.currentValue}`;
-                valueDisplay.style.color = this.config.sliderInfoColour;
-                controlsContainer.appendChild(valueDisplay);
-            }
-
-            // Create and append the input field
-            if (this.config.enableInputField) {
-                const inputField = document.createElement('input');
-                inputField.type = 'number';
-                inputField.min = this.config.minValue;
-                inputField.max = this.config.maxValue;
-                inputField.step = this.config.step;
-                inputField.value = this.currentValue;
-                inputField.id = `${this.config.title}_inputField`;
-                inputField.addEventListener('input', (e) => this.updateSliderValue(e.target.value));
-                controlsContainer.appendChild(inputField);
-            }
-
-            // Create and append the submit button
-            if (this.config.sliderShowSubmitButton) {
-                const submitButton = document.createElement('button');
-                submitButton.textContent = this.config.sliderSubmitButtonText;
-                submitButton.className = 'submitButton';
-                submitButton.type = 'submit';
-                submitButton.style.backgroundColor = this.config.sliderSubmitButtonColour;
-                submitButton.style.color = this.config.sliderSubmitButtonTextColour;
-                submitButton.addEventListener('click', () => alert(`Slider value: ${this.currentValue}`));
-                controlsContainer.appendChild(submitButton);
-            }
+            this.appendControls(controlsContainer);
         }
 
-        createDefaultControls(controlsContainer) {
-            // Default Style 0: Vertical layout
+        appendControls(container) {
             if (this.config.showCurrentValue) {
                 const valueDisplay = document.createElement('div');
-                valueDisplay.id = `${this.config.title}_valueDisplay`;
+                valueDisplay.id = `${this.container.id}_valueDisplay`; // Ensure unique ID for the display
                 valueDisplay.textContent = `${this.config.sliderValueInfo} ${this.currentValue}`;
-                valueDisplay.style.color = this.config.sliderInfoColour;
-                controlsContainer.appendChild(valueDisplay);
+                container.appendChild(valueDisplay);
             }
 
             if (this.config.enableInputField) {
@@ -394,9 +319,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
                 inputField.max = this.config.maxValue;
                 inputField.step = this.config.step;
                 inputField.value = this.currentValue;
-                inputField.id = `${this.config.title}_inputField`;
+                inputField.id = `${this.container.id}_inputField`; // Ensure unique ID for the input
                 inputField.addEventListener('input', (e) => this.updateSliderValue(e.target.value));
-                controlsContainer.appendChild(inputField);
+                container.appendChild(inputField);
             }
 
             if (this.config.sliderShowSubmitButton) {
@@ -404,19 +329,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
                 submitButton.textContent = this.config.sliderSubmitButtonText;
                 submitButton.className = 'submitButton';
                 submitButton.type = 'submit';
-                submitButton.style.backgroundColor = this.config.sliderSubmitButtonColour;
-                submitButton.style.color = this.config.sliderSubmitButtonTextColour;
-                submitButton.addEventListener('click', () => alert(`Slider value: ${this.currentValue}`));
-                controlsContainer.appendChild(submitButton);
+                //submitButton.addEventListener('click', () => alert(`Slider value: ${this.currentValue}`));
+                container.appendChild(submitButton);
             }
         }
 
         getControlsStyleClass() {
-            // Determine the style class based on sliderStyle
             if (this.config.sliderStyle === 1) return 'style-1';
             if (this.config.sliderStyle === 2) return 'style-2';
             if (this.config.sliderStyle === 3) return 'style-3';
-            return ''; // Default style
+            return '';
         }
 
         bindEvents(canvas, ctx) {
@@ -424,46 +346,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
                 this.isDragging = true;
                 this.updateSliderPosition(e, ctx);
             });
-        
+
             document.addEventListener('mouseup', () => {
                 this.isDragging = false;
-                // Handle auto-return functionality on mouse up
                 if (this.config.autoReturnToPos) {
                     this.currentValue = this.config.returnToPosValue;
                     this.updateSliderValue(this.currentValue);
                 }
             });
-        
+
             canvas.addEventListener('mousemove', (e) => {
                 if (this.isDragging) {
                     this.updateSliderPosition(e, ctx);
                 }
             });
-        
+
             canvas.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 this.isDragging = true;
                 this.updateSliderPosition(e.touches[0], ctx);
             });
-        
+
             canvas.addEventListener('touchmove', (e) => {
                 e.preventDefault();
                 if (this.isDragging) {
                     this.updateSliderPosition(e.touches[0], ctx);
                 }
             });
-        
+
             canvas.addEventListener('touchend', (e) => {
                 e.preventDefault();
                 this.isDragging = false;
-                // Handle auto-return functionality on touch end
                 if (this.config.autoReturnToPos) {
                     this.currentValue = this.config.returnToPosValue;
                     this.updateSliderValue(this.currentValue);
                 }
             });
         }
-        
 
         updateSliderPosition(e, ctx) {
             const rect = e.target.getBoundingClientRect();
@@ -490,33 +409,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
         updateSliderValue(value) {
             this.currentValue = Math.max(this.config.minValue, Math.min(this.config.maxValue, value));
-            if (this.config.showCurrentValue) {
-                document.getElementById(`${this.config.title}_valueDisplay`).textContent = `${this.config.sliderValueInfo} ${this.currentValue}`;
+            
+            // Update the value display if it exists
+            const valueDisplay = document.getElementById(`${this.container.id}_valueDisplay`);
+            if (valueDisplay) {
+                valueDisplay.textContent = `${this.config.sliderValueInfo} ${this.currentValue}`;
             }
-            if (this.config.enableInputField) {
-                document.getElementById(`${this.config.title}_inputField`).value = this.currentValue;
+
+            // Update the input field if it exists
+            const inputField = document.getElementById(`${this.container.id}_inputField`);
+            if (inputField) {
+                inputField.value = this.currentValue;
             }
-        
+
+            // Trigger the onChange callback if it is defined
+            if (typeof this.config.onChange === 'function') {
+                this.config.onChange(this.currentValue);
+            }
+
             const ctx = this.sliderCanvas.getContext('2d');
             this.drawSlider(ctx);
         }
-        
     }
 
     class SliderVertical extends Slider {
         constructor(containerId, config = {}) {
-            // Set default width and height for vertical sliders
             super(containerId, {
                 ...config,
                 width: config.width || 50,
-                height: config.height || 400
+                height: config.height || 300
             });
         }
     }
 
     class SliderHorizontal extends Slider {
         constructor(containerId, config = {}) {
-            // Set default width and height for horizontal sliders
             super(containerId, {
                 ...config,
                 width: config.width || 300,
@@ -525,7 +452,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
         }
     }
 
-    // Expose the slider classes to the global scope
     window.SliderVertical = SliderVertical;
     window.SliderHorizontal = SliderHorizontal;
 })();
