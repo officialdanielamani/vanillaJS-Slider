@@ -24,16 +24,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
                 console.error(`Container with id "${containerId}" not found`);
                 return;
             }
-
+        
+            // Read CSS variables for slider line and handle colors
+            const computedStyles = window.getComputedStyle(this.container);
+            const cssSliderLineColor = computedStyles.getPropertyValue('--slider-line-color').trim();
+            const cssSliderHandleColor = computedStyles.getPropertyValue('--slider-handle-color').trim();
+        
             // Default width and height will be set by derived classes
             this.config = {
                 width: config.width,  // Width to be determined by child classes
                 height: config.height, // Height to be determined by child classes
                 sliderLineWidth: config.sliderLineWidth || 2,
-                sliderLineColor: config.sliderLineColor || '#000', // Default line color to black
+                sliderLineColor: config.sliderLineColor || cssSliderLineColor || '#000', // Config > CSS > Default
                 sliderHandleWidth: config.sliderHandleWidth || 20,
                 sliderHandleHeight: config.sliderHandleHeight || 20,
-                sliderHandleColor: config.sliderHandleColor || '#444', // Default handle color to dark grey
+                sliderHandleColor: config.sliderHandleColor || cssSliderHandleColor || '#444', // Config > CSS > Default
                 sliderHandleShape: config.sliderHandleShape || 'circle', // New parameter for handle shape
                 autoReturnToPos: config.autoReturnToPos || false,
                 returnToPosValue: config.returnToPosValue || 0,
@@ -49,14 +54,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
                 sliderStyle: config.sliderStyle || 0, // New option for layout style
                 onChange: config.onChange || null // Callback for value changes
             };
-
+        
             this.currentValue = this.config.minValue;
             this.isDragging = false;
-
+        
             this.addDefaultStyles(); // Add default styles
             this.createSlider();
         }
-
+        
         addDefaultStyles() {
             // Check if styles are already defined
             if (!document.getElementById('slider-styles')) {
@@ -270,7 +275,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
         }
 
         createStyle1Controls(controlsContainer, wrapper) {
-            // Implement style 1 controls
             const box1 = document.createElement('div');
             box1.className = 'controlsBox';
             box1.appendChild(wrapper.querySelector('.sliderCanvasWrapper'));
@@ -284,7 +288,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
         }
 
         createStyle2Controls(controlsContainer, wrapper) {
-            // Implement style 2 controls
             const box1 = document.createElement('div');
             box1.className = 'controlsBox';
             box1.appendChild(wrapper.querySelector('.sliderCanvasWrapper'));
@@ -298,7 +301,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
         }
 
         createStyle3Controls(controlsContainer, wrapper) {
-            // Implement style 3 controls
             controlsContainer.classList.add('style-3');
             controlsContainer.appendChild(wrapper.querySelector('.sliderCanvasWrapper'));
             this.appendControls(controlsContainer);
