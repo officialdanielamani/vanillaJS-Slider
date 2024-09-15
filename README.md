@@ -106,6 +106,18 @@ Here is more advance configuration (see Parameter List for more options)
 ```
 No need for configure all parameter, see the default value if it match your requirements.
 
+## Style
+Can over-ride default style to all slider using CSS (if a slider on JS config have own tyle, it will ignore the CSS)
+
+```CSS
+    .slider-container {
+        --slider-line-color: blue; /* Set the line color via CSS */
+        --slider-handle-color: red; /* Set the handle color via CSS */
+    }
+```
+
+If CSS and Config not define will use default as fallback
+
 ## Type
 
 1. **`SliderHorizontal`**
